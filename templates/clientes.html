@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            min-height: 50vh;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #007bff;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+
+        li:hover {
+            background-color: #f1f1f1;
+        }
+
+        .cliente-nome {
+            font-weight: bold;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: #007bff;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+            border-radius: 4px;
+        }
+
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+            border: 1px solid #007bff;
+        }
+
+        a.back-button {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+            width: 100%;
+            max-width: 100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        a.back-button:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Clientes</h1>
+        <ul>
+            {% for cliente in clientes.items %}
+                <li>
+                    <span class="cliente-nome">{{ cliente.nome }}</span>
+                    <span>{{ cliente.email }}</span>
+                    <form method="POST" action="{{ url_for('delete_cliente', cliente_id=cliente.id) }}" style="display: inline;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="delete-button">Deletar</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="pagination">
+            {% if clientes.has_prev %}
+                <a href="{{ url_for('show_clientes', page=clientes.prev_num) }}">&laquo; Anterior</a>
+            {% else %}
+                <a href="#" style="visibility: hidden;">&laquo; Anterior</a>
+            {% endif %}
+
+            {% for page_num in clientes.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num == clientes.page %}
+                    <a href="{{ url_for('show_clientes', page=page_num) }}" class="active">{{ page_num }}</a>
+                    {% else %}
+                        <a href="{{ url_for('show_clientes', page=page_num) }}">{{ page_num }}</a>
+                    {% endif %}
+                {% else %}
+                    <span>…</span>
+                {% endif %}
+            {% endfor %}
+
+            {% if clientes.has_next %}
+                <a href="{{ url_for('show_clientes', page=clientes.next_num) }}">Próximo &raquo;</a>
+            {% else %}
+                <a href="#" style="visibility: hidden;">Próximo &raquo;</a>
+            {% endif %}
+        </div>
+
+        <a href="/" class="back-button">Voltar</a>
+    </div>
+</body>
+</html>
